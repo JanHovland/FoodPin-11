@@ -119,4 +119,34 @@ class RestaurantTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: false)
         
     }
+    
+    // EditingStyle for delete (swipe left) which is default
+    
+    override func tableView(_ tableview: UITableView, commit editingstyle: UITableViewCell.EditingStyle,
+                   forRowAt indexpath: IndexPath) {
+        
+        if editingstyle == .delete {
+            
+            // Delete the row from the data source
+            
+            restaurantNames.remove(at: indexpath.row)
+            restaurantLocations.remove(at: indexpath.row)
+            restaurantTypes.remove(at: indexpath.row)
+            restaurantIsVisited.remove(at: indexpath.row)
+            restaurantImages.remove(at: indexpath.row)
+            
+            // tableview.reloadData()
+            tableview.deleteRows(at: [indexpath], with: .fade)
+ /*
+            print("Total item: \(restaurantNames.count)")
+            for name in restaurantNames {
+                print(name)
+            }
+ */
+            
+        }
+        
+    }
+    
+
 }
