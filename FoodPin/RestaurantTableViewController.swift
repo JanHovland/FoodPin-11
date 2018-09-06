@@ -20,9 +20,6 @@ class RestaurantTableViewController: UITableViewController {
     
     var restaurantIsVisited = Array(repeating: false, count: 21)
     
-    var checkIn = "Check In"
-    var temp = ""
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.cellLayoutMarginsFollowReadableWidth = true
@@ -87,15 +84,6 @@ class RestaurantTableViewController: UITableViewController {
         let callAction = UIAlertAction(title: "Call " + "123-000-\(indexPath.row)", style: .default , handler: callActionHandler)
         optionMenu.addAction(callAction)
         
-        // Check in action and change text
-        
-        if checkIn == "Check in" {
-            checkIn = "Check out"
-        }
-        else {
-            checkIn = "Check in"
-        }
-        
         // Set accessoryType and update array
         
         let checkActionTitle = (restaurantIsVisited[indexPath.row]) ? "Undo Check in" : "Check in"
@@ -122,31 +110,80 @@ class RestaurantTableViewController: UITableViewController {
     
     // EditingStyle for delete (swipe left) which is default
     
-    override func tableView(_ tableview: UITableView, commit editingstyle: UITableViewCell.EditingStyle,
-                   forRowAt indexpath: IndexPath) {
-        
-        if editingstyle == .delete {
+//    override func tableView(_ tableview: UITableView, commit editingstyle: UITableViewCell.EditingStyle,
+//                   forRowAt indexpath: IndexPath) {
+//
+//        if editingstyle == .delete {
+//
+//            // Delete the row from the data source
+//
+//            restaurantNames.remove(at: indexpath.row)
+//            restaurantLocations.remove(at: indexpath.row)
+//            restaurantTypes.remove(at: indexpath.row)
+//            restaurantIsVisited.remove(at: indexpath.row)
+//            restaurantImages.remove(at: indexpath.row)
+//
+//            // tableview.reloadData() : viser alle radene på nytt
+//
+//            tableview.deleteRows(at: [indexpath], with: .fade)
+//
+//       }
+//
+//    }
+
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") {
+            (action, sourceView, completionHandler) in
             
             // Delete the row from the data source
             
-            restaurantNames.remove(at: indexpath.row)
-            restaurantLocations.remove(at: indexpath.row)
-            restaurantTypes.remove(at: indexpath.row)
-            restaurantIsVisited.remove(at: indexpath.row)
-            restaurantImages.remove(at: indexpath.row)
+            self.restaurantNames.remove(at: indexPath.row)
+            self.restaurantLocations.remove(at: indexPath.row)
+            self.restaurantTypes.remove(at: indexPath.row)
+            self.restaurantIsVisited.remove(at: indexPath.row)
+            self.restaurantImages.remove(at: indexPath.row)
             
-            // tableview.reloadData()
-            tableview.deleteRows(at: [indexpath], with: .fade)
- /*
-            print("Total item: \(restaurantNames.count)")
-            for name in restaurantNames {
-                print(name)
-            }
- */
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
+            
+            // call completion handler with true to indicate
+            
+            completionHandler(true)
+            
             
         }
         
+        let shareAction = UIContextualAction(style: .normal, title: "Share") {
+            (action, sourceView, completionHandler) in
+            let defaultText = "Just checking in at " + self.restaurantImages[indexPath.row]
+            
+            let activityController: UIActivityViewController
+            
+            if let imageToShare = UIImage(named: self.restaurantImages[indexPath.row]) {
+                
+               activityController = UIActivityViewController(activityItems: [defaultText, imageToShare], applicationActivities: nil)
+                
+            } else {
+                
+               activityController = UIActivityViewController(activityItems: [defaultText], applicationActivities: nil)
+                
+            }
+            
+            self.present(activityController, animated: true, completion: nil)
+            completionHandler(true)
+        }
+
+        let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction, shareAction])
+        
+        return swipeConfiguration
+        
     }
     
-
 }
+
+
+
+
+
+
+
+
